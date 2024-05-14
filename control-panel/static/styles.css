@@ -1,0 +1,51 @@
+/* Apply a dark theme to the body */
+body {
+    background-color: #121212;
+    color: #ffffff;
+    line-height: 1.6; /* Add some vertical spacing */
+}
+
+/* Style the label */
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Style the input */
+input[type="text"], select {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px; /* Add some vertical spacing */
+}
+
+/* Style the nested details */
+details details {
+    margin-left: 20px;
+}
+
+/* Style the file link */
+.file-link {
+    display: block;
+    margin-left: 20px;
+}
+
+/* Style the flex container */
+.flex-container {
+    align-items: center; /* Align items vertically */
+}
+
+/* Style the model */
+.model {
+    margin-right: auto;
+}
+
+/* Style the buttons */
+button {
+    margin: 0 10px; /* Add horizontal margins */
+}
+
+a:visited {
+    color: white;
+}
