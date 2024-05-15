@@ -3,4 +3,5 @@
 /__pycache__/
 corrupt_images.log
 virtenv/
-output.log
+*.log
+*.out

@@ -13,8 +13,9 @@ load_dotenv()
 app = Flask(__name__, static_folder='static')
 CORS(app)
 
-TRAINING_PROJECT_PATH = os.getenv("TRAINING_PROJECT_PATH")
+BASE_PATH = os.getenv("BASE_PATH")
 MODELS_PATH = os.getenv("MODELS_PATH")
+TFJS_FILESERVER_PATH = os.getenv("TFJS_FILESERVER_PATH")
 
 @app.route('/start_testing', methods=['POST'])
 def start_testing():
@@ -23,34 +24,26 @@ def start_testing():
     if not model_path:
         return jsonify({'error': 'Model path not provided'}), 400
 
-    # Run the shell script with the model path as an argument
-    result = subprocess.run([f'{TRAINING_PROJECT_PATH}/automation/start_test.sh', model_path], capture_output=True, text=True)
-
-    # Check the result of the shell script
-    if result.returncode != 0:
-        # If the shell script failed, return the stderr
-        return jsonify({'error': result.stderr}), 500
-    else:
-        # If the shell script succeeded, return the stdout
-        return jsonify({'message': result.stdout}), 200
+    try:
+        # Run the shell script with the model path as an argument
+        result = subprocess.Popen([f'{BASE_PATH}/automation/start_test.sh',BASE_PATH, model_path])
+        return jsonify({'message': 'Test started'}), 200
+    except Exception as e:
+        return jsonify({'error': 'Error starting test: ' + str(e)}), 500
 
 @app.route('/convert', methods=['POST'])
 def convert():
     data = request.get_json()
-    model_path = data.get('model')
+    model_path = f"{MODELS_PATH}/{data.get('model')}"
     if not model_path:
         return jsonify({'error': 'Model path not provided'}), 400
 
-    # Run the shell script with the model path as an argument
-    result = subprocess.run([f'{TRAINING_PROJECT_PATH}/automation/convert.sh', model_path], capture_output=True, text=True)
-
-    # Check the result of the shell script
-    if result.returncode != 0:
-        # If the shell script failed, return the stderr
-        return jsonify({'error': result.stderr}), 500
-    else:
-        # If the shell script succeeded, return the stdout
-        return jsonify({'message': result.stdout}), 200
+    try:
+        # Run the shell script with the model path as an argument
+        result = subprocess.Popen([f'{BASE_PATH}/automation/convert.sh', BASE_PATH, model_path, TFJS_FILESERVER_PATH])
+        return jsonify({'message': 'Conversion started'}), 200
+    except Exception as e:
+        return jsonify({'error': 'Error starting conversion: ' + str(e)}), 500
 
 @app.route('/start_tensorboard', methods=['POST'])
 def start_tensorboard():
@@ -59,16 +52,12 @@ def start_tensorboard():
     if not logdir:
         return jsonify({'error': 'Logdir path not provided'}), 400
 
-    # Run the shell script with the model path as an argument
-    result = subprocess.run([f'{TRAINING_PROJECT_PATH}/automation/start_tensorboard.sh', logdir], capture_output=True, text=True)
-
-    # Check the result of the shell script
-    if result.returncode != 0:
-        # If the shell script failed, return the stderr
-        return jsonify({'error': result.stderr}), 500
-    else:
-        # If the shell script succeeded, return the stdout
-        return jsonify({'message': result.stdout}), 200
+    try:
+        # Run the shell script with the model path as an argument
+        result = subprocess.Popen([f'{BASE_PATH}/automation/start_tensorboard.sh', MODELS_PATH, logdir])
+        return jsonify({'message': 'TensorBoard started'}), 200
+    except Exception as e:
+        return jsonify({'error': 'Error starting TensorBoard: ' + str(e)}), 500
 
 # Load the processes from the JSON file
 def load_processes():
@@ -89,7 +78,7 @@ def home():
 
 @app.route('/get_logs', methods=['GET'])
 def get_logs():
-    log_file = f'{TRAINING_PROJECT_PATH}/last_training.log'
+    log_file = f'{BASE_PATH}/last_training.log'
     try:
         # Read the entire log file
         with open(log_file, 'r') as f:
@@ -117,7 +106,7 @@ def get_logs():
 
 @app.route('/get_evaluation_logs', methods=['GET'])
 def get_evaluation_logs():
-    log_file = f'{TRAINING_PROJECT_PATH}/last_evaluation.log'
+    log_file = f'{BASE_PATH}/last_evaluation.log'
     try:
         # Read the entire log file
         with open(log_file, 'r') as f:
@@ -174,7 +163,7 @@ def get_directory_structure(rootdir):
 
 @app.route('/hyperparameters')
 def hyperparameters():
-    with open(f'{TRAINING_PROJECT_PATH}/config.json', 'r') as f:
+    with open(f'{BASE_PATH}/config.json', 'r') as f:
         config = json.load(f)
     return jsonify(config)
 
@@ -183,7 +172,7 @@ def update_config():
     new_config = request.get_json()  # Get the new config from the client
 
     # Open the config file and update the values
-    with open(f'{TRAINING_PROJECT_PATH}/config.json', 'r+') as f:
+    with open(f'{BASE_PATH}/config.json', 'r+') as f:
         config = json.load(f)
         config.update(new_config)
         f.seek(0)
@@ -195,7 +184,7 @@ def update_config():
 @app.route('/start_training', methods=['POST'])
 def start_training():
     # The command to start the training
-    command = f'{TRAINING_PROJECT_PATH}/automation/start_training.sh'
+    command = f'{BASE_PATH}/automation/start_training.sh {BASE_PATH}'
 
     try:
         # Execute the command
@@ -240,7 +229,7 @@ def stop_process(process_id):
         subprocess.Popen('kill -9 ' + process_id, shell=True)
         return jsonify({'message': f'Process {process_id} has been terminated.'}), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': 'Error terminating process: ' + str(e)}), 500
 
 @app.route('/<path:path>')
 def static_file(path):

@@ -10,14 +10,13 @@ import config
 # CALLBACKS -----------------------------------
 # Define a callback for dynamic checkpoint naming and specific folder
 def checkpoint_callback(folder_name):
+    time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     checkpoint_dir = os.path.join(os.getenv("MODELS_PATH"), folder_name, "checkpoints")
     os.makedirs(checkpoint_dir, exist_ok=True)
-    time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     checkpoint_callback = ModelCheckpoint(
         filepath=os.path.join(
             checkpoint_dir,
-            time,
-            "_epoch_{epoch:04d}_loss_{loss:.4f}_acc_{accuracy:.4f}_val_loss_{val_loss:.4f}_val_acc_{val_accuracy:.4f}.h5",
+            time+"_epoch_{epoch:04d}_loss_{loss:.4f}_acc_{accuracy:.4f}_val_loss_{val_loss:.4f}_val_acc_{val_accuracy:.4f}.keras",
         ),
         save_best_only=True,
         monitor="val_loss",  # Monitoring validation loss

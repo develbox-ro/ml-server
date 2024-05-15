@@ -8,30 +8,27 @@ def saveMetric(epochs, metric_values, val_metric_values, metric_name, current_mo
     plt.figure(figsize=(10, 6))
     plt.plot(epochs, metric_values, color='teal', marker='o', label=f'Training {metric_name}')
     plt.plot(epochs, val_metric_values, color='orange', marker='o', label=f'Validation {metric_name}')
-    
+
     plt.title(f'{metric_name} (Training vs Validation)', fontsize=20)
     plt.xlabel('Epochs', fontsize=14)
     plt.ylabel(metric_name, fontsize=14)
     plt.legend()
     plt.grid(True)
-    
+
     save_path = os.path.join(os.getenv("MODELS_PATH"), current_model_folder_name, 'metrics', f'{metric_name}_plot.png')
     plt.savefig(save_path, bbox_inches='tight')
     plt.show()
 
 def saveModel(model, current_model_folder_name, name='model'):
     keras_save_path = os.path.join(os.getenv("MODELS_PATH"), current_model_folder_name, 'saved_model', 'keras', f'{name}.keras')
-    tf_save_path = os.path.join(os.getenv("MODELS_PATH"), current_model_folder_name, 'saved_model', 'tf', name)
     h5_save_path = os.path.join(os.getenv("MODELS_PATH"), current_model_folder_name, 'saved_model', 'h5', f'{name}.h5')
 
     os.makedirs(os.path.dirname(keras_save_path), exist_ok=True)
-    os.makedirs(os.path.dirname(tf_save_path), exist_ok=True)
     os.makedirs(os.path.dirname(h5_save_path), exist_ok=True)
 
     tfjs.converters.save_keras_model(model, os.path.join(os.getenv("MODELS_PATH"), current_model_folder_name, 'saved_model', 'tfjs'))
-    tf.keras.models.save_model(model, keras_save_path)
-    tf.keras.models.save_model(model, tf_save_path, save_format='tf')
-    tf.keras.models.save_model(model, h5_save_path, save_format='h5')
+    model.save(keras_save_path)
+    model.save(h5_save_path)
 
 def eval(model, test_generator, test_steps, history,start_datetime, finish_datetime, current_model_folder_name):
     print("Starting evaluation...")
@@ -60,9 +57,9 @@ def eval(model, test_generator, test_steps, history,start_datetime, finish_datet
         file.write(f'Recall: {recall}\n')
         file.write(f'F1-score: {f1_score}\n')
         file.write('-----------------------\n\n')
-        file.write(f'Start Time: {start_datetime}')
-        file.write(f'Finish Time: {finish_datetime}')
-        file.write(f'Training took: {finish_datetime-start_datetime}')
+        file.write(f'Start Time: {start_datetime}\n)')
+        file.write(f'Finish Time: {finish_datetime}\n)')
+        file.write(f'Training took: {finish_datetime-start_datetime}\n)')
 
     # Close the file
     file.close()
@@ -83,7 +80,7 @@ def eval(model, test_generator, test_steps, history,start_datetime, finish_datet
         saveMetric(range(1, num_epochs + 1), history.history['precision'], history.history['val_precision'], 'Precision', current_model_folder_name)
         saveMetric(range(1, num_epochs + 1), history.history['recall'], history.history['val_recall'], 'Recall', current_model_folder_name)
         saveMetric(range(1, num_epochs + 1), history.history['f1_score'], history.history['val_f1_score'], 'F1 Score', current_model_folder_name)
-        
+
     except Exception as e:
         print("Could not save the metrics")
         print(e)
@@ -94,5 +91,5 @@ def eval(model, test_generator, test_steps, history,start_datetime, finish_datet
     except Exception as e:
         print("Could not save the model")
         print(e)
-        
+
     print("Evaluation completed...")

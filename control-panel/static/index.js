@@ -1,4 +1,4 @@
-const SERVER_HOST = "http://192.168.1.12";
+const SERVER_HOST = "http://192.168.69.207";
 /* Change with the url of the control-panel flask server */
 const controlPanelServerUrl =
     SERVER_HOST + ":8081"; /* example http://192.168.69.207:8081 */
@@ -260,7 +260,7 @@ function createSubItems(node, parentElement, path = "") {
         const newPath = path ? `${path}/${item}` : item;
         if (node[item] === null) {
             // If the item is a file
-            if (item.endsWith(".h5")) {
+            if (item.endsWith(".keras") || item.endsWith(".h5") ) {
                 // Create a new div element
                 const div = document.createElement("div");
                 div.className = "flex-container";
@@ -306,7 +306,7 @@ function createSubItems(node, parentElement, path = "") {
                         headers: {
                             "Content-Type": "application/json",
                         },
-                        body: JSON.stringify({ model: newPath }),
+                        body: JSON.stringify({ model: newPath.replace("models/", "") }),
                     })
                         .then((response) => response.json())
                         .then((data) => {

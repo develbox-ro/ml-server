@@ -2,11 +2,12 @@
 This is a simple REST API Flask server with some endpoints for controlling the machine learning server
 
 ## Environment Variables
-- `TRAINING_PROJECT_PATH` \- Path to the training project folder
+- `BASE_PATH` \- Path to the training project folder
+- `MODELS_PATH` \- Path to the models folder
 
 ## API
 ### Processes
-- `GET /processes` \- Get all `python3` running processes 
+- `GET /processes` \- Get all `python3` running processes
 - `POST /stop_process/{id}` \- Stop the process with the `id` passed
 
 ### Training
@@ -18,8 +19,8 @@ This is a simple REST API Flask server with some endpoints for controlling the m
 
 ### Logging
 - `GET /get_logs` \- Get the training logs of the current running training
-- `GET /get_evaluation_logs` \- Get the evaluation logs of the current running training 
-- `POST /start_tensorboard` \- Start tensorboard 
+- `GET /get_evaluation_logs` \- Get the evaluation logs of the current running training
+- `POST /start_tensorboard` \- Start tensorboard
     - `BODY: {logdir: string}` directory with logs
 
 ### Hyperparameters
@@ -30,6 +31,6 @@ This is a simple REST API Flask server with some endpoints for controlling the m
 ### Models
 - `GET /get_models` \- Get list of all trained models
 
-### Other 
+### Other
 - `POST /convert` \- Convert the last trained model to TFJS
     - `BODY: {model: string}` model_path to be converted
