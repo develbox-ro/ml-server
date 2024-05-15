@@ -358,7 +358,7 @@ function createSubItems(node, parentElement, path = "") {
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ logdir: newPath }),
+                    body: JSON.stringify({ logdir: newPath.replace("models/", "") }),
                 })
                     .then((response) => response.json())
                     .then((data) => {

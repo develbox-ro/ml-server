@@ -18,4 +18,4 @@ source "${MODELS_PATH}/virtenv/bin/activate"
 # Extract the model folder name from the log directory
 MODEL_FOLDER_NAME=$(basename "$(dirname "$LOGDIR")")
 
-nohup tensorboard --logdir $LOGDIR --host 0.0.0.0 > "${MODELS_PATH}/$MODEL_FOLDER_NAME/tensorboard.log" 2>&1 &
+nohup tensorboard --logdir "$MODELS_PATH/$LOGDIR" --bind_all --port 6006 > "${MODELS_PATH}/$MODEL_FOLDER_NAME/tensorboard.log" 2>&1 &
