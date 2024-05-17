@@ -1,7 +1,7 @@
 matplotlib
 argparse
 python-dotenv
-tensorflow
+tensorflow[and-cuda]
 pillow
 pyyaml
 h5py
@@ -9,3 +9,4 @@ opencv-python
 scikit-learn
 cuda-python
 tensorflowjs
+

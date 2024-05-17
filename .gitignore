@@ -1,4 +1,7 @@
 */.env
-*/nohup.out
+*/*.out
+*.out
 */penv/
 .DS_Store
+control-panel/processes.json
+
