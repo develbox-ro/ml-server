@@ -101,6 +101,15 @@ fetch(controlPanelServerUrl + "/hyperparameters")
                 <option value="MOBILENET" ${
                     config.MODEL === "MOBILENET" ? "selected" : ""
                 }>MOBILENET</option>
+                <option value="MOBILENETV2" ${
+                    config.MODEL === "MOBILENETV2" ? "selected" : ""
+                }>MOBILENETV2</option>
+                <option value="MOBILENETV3SMALL" ${
+                    config.MODEL === "MOBILENETV3SMALL" ? "selected" : ""
+                }>MOBILENETV3SMALL</option>
+                <option value="MOBILENETV3LARGE" ${
+                    config.MODEL === "MOBILENETV3LARGE" ? "selected" : ""
+                }>MOBILENETV3LARGE</option>
                 <option value="DENSENET121" ${
                     config.MODEL === "DENSENET121" ? "selected" : ""
                 }>DENSENET121</option>
