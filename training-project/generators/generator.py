@@ -127,15 +127,15 @@ class Generator(tf.keras.utils.Sequence):
                 img = cv2.cvtColor(img, cv2.COLOR_BGRA2RGB)
             elif img_shape == 3:
                 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-                
+
             img = self.resize_image(img, self.image_min_side)
-    
+
             if (config.USE_AUGMENTATION and self.is_training):
                 # Apply the transformations from the ImageDataGenerator
                 img = self.datagen.random_transform(img)
-    
+
             images.append(img)
-            
+
         return images
 
     def construct_image_batch(self, image_group):

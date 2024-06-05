@@ -1,6 +1,6 @@
 import os
 import sys
-from tensorflow.keras.applications.mobilenet import MobileNetV3Large
+from tensorflow.keras.applications.mobilenet_v3 import MobileNetV3Large
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Dense, GlobalAveragePooling2D, Dropout
 from tensorflow.keras.optimizers import Adam

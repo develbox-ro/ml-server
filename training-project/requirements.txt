@@ -9,4 +9,5 @@ opencv-python
 scikit-learn
 cuda-python
 tensorflowjs
-
+memory_profiler
+tensorboard_plugin_profile

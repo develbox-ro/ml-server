@@ -1,5 +1,5 @@
 {
-    "MODEL": "VGG16",
+    "MODEL": "MOBILENETV2",
     "IMAGE_SIZE": "224",
     "AD_IMAGE_LIMIT": "all",
     "NONAD_IMAGE_LIMIT": "all",

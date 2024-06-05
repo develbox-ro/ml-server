@@ -2,21 +2,36 @@ import os
 import sys
 import pickle
 import json
+import logging
 import datetime
+import threading
+import traceback
 import tensorflow as tf
 import pandas as pd
 from sklearn.model_selection import train_test_split
+from memory_profiler import profile
+from tensorflow.profiler.experimental import Profile
 # -----------
 sys.path.append("..")
 sys.path.append(os.getcwd())
 from models.get_model import get_model
 from helpers.eval import eval
 from helpers.utils import collect_image_paths
-from generators.generator import Generator 
+from generators.generator import Generator
 from helpers.callbacks import checkpoint_callback, csv_logger_callback, early_stopping, tensorboard_callback
 import config
 
-# GPU setup configuration 
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+
+# Clear the existing log file
+with open('last_training.log', 'w'):
+    pass
+
+# Set up logging
+log_file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'last_training.log')
+logging.basicConfig(filename=log_file_path, level=logging.INFO)
+
+# GPU setup configuration
 tf.keras.backend.clear_session()
 gpus = tf.config.experimental.list_physical_devices('GPU')
 
@@ -93,20 +108,38 @@ with open(f"{os.getenv('MODELS_PATH')}/{current_model_folder_name}/config.json",
     json.dump(config_data, f)
 
 # Fit the model
-history = model.fit(
-    train_generator,
-    steps_per_epoch=train_steps,
-    epochs=config.EPOCHS,
-    validation_data=val_generator,
-    validation_steps=val_steps,
-    verbose=config.VERBOSE_LEVEL,
-    callbacks=[
-        tensorboard_callback(current_model_folder_name),
-        checkpoint_callback(current_model_folder_name),
-        csv_logger_callback(current_model_folder_name),
-        early_stopping,
-    ],
-)
+@profile
+def train_model(model,
+                train_generator,
+                val_generator,
+                train_steps,
+                val_steps):
+    logging.info('Starting training...')
+    # Start TensorFlow Profiler
+    with tf.profiler.experimental.Profile('logdir'):
+        history = model.fit(
+            train_generator,
+            steps_per_epoch=train_steps,
+            epochs=config.EPOCHS,
+            validation_data=val_generator,
+            validation_steps=val_steps,
+            verbose=config.VERBOSE_LEVEL,
+            callbacks=[
+                tensorboard_callback(current_model_folder_name),
+                checkpoint_callback(current_model_folder_name),
+                csv_logger_callback(current_model_folder_name),
+                early_stopping,
+            ],
+        )
+    logging.info('Training finished.')
+    return history
+
+try:
+    # Your training code here
+    history = train_model(model, train_generator, val_generator, train_steps, val_steps)
+except Exception as e:
+    logging.error(f'Error during training: {e}')
+    logging.error(traceback.format_exc())
 
 finish_datetime = datetime.datetime.now()
 
@@ -122,4 +155,5 @@ hist_csv_file = f"{os.getenv('MODELS_PATH')}/{current_model_folder_name}/history
 with open(hist_csv_file, mode='w') as f:
     hist_df.to_csv(f)
 
-eval(model, test_generator, test_steps, history,start_datetime, finish_datetime, current_model_folder_name)
+eval(model, test_generator, test_steps, history, start_datetime, finish_datetime, current_model_folder_name)
+

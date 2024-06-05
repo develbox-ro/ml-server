@@ -1,6 +1,6 @@
 import os
 import sys
-from tensorflow.keras.applications.mobilenet import MobileNetV2
+from tensorflow.keras.applications.mobilenet_v2 import MobileNetV2
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Dense, GlobalAveragePooling2D, Dropout
 from tensorflow.keras.optimizers import Adam
@@ -12,7 +12,9 @@ from helpers.custom_metrics import F1Score
 
 def mobileNetV2(strategy):
     with strategy.scope():
-        base_model = MobileNetV2(weights='imagenet', include_top=False)
+        base_model = MobileNetV2(input_shape=(224, 224, 3),
+                                 weights='imagenet',
+                                 include_top=False)
         for layer in base_model.layers:
             layer.trainable = False
 

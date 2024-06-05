@@ -7,9 +7,7 @@ from .inception_v3 import inceptionV3
 from .xception import xception
 from .efficientnet_b0 import efficientNetB0
 from .mobilenet import mobileNet
-from .mobilenetV2 import mobileNetV2
-from .mobilenetV3Small import mobileNetV3Small
-from .mobilenetV3Large import mobileNetV3Large
+from .mobilenetv2 import mobileNetV2
 from .densenet121 import denseNet121
 
 sys.path.append("..")
@@ -33,10 +31,6 @@ def get_model(strategy):
         return mobileNet(strategy)
     elif config.MODEL == 'MOBILENETV2':
         return mobileNetV2(strategy)
-    elif config.MODEL == 'MOBILENETV3SMALL':
-        return mobileNetV3Small(strategy)
-    elif config.MODEL == 'MOBILENETV3LARGE':
-        return mobileNetV3Large(strategy)
     elif config.MODEL == 'DENSENET121':
         return denseNet121(strategy)
     else:
